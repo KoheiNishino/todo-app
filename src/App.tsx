@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import { css } from "../styled-system/css";
 
 type Brand<T, B> = T & { __brand: B };
@@ -13,9 +13,46 @@ type Todo = {
 
 const KEY = "todos";
 
+type Action =
+  | {
+      type: "add";
+      title: Title;
+    }
+  | {
+      type: "checked";
+      checked: boolean;
+      id: Id;
+    }
+  | {
+      type: "delete";
+      id: Id;
+    };
+
+const reducer = (state: Todo[], action: Action) => {
+  if (action.type === "add") {
+    const newTodos = [
+      ...state,
+      { id: crypto.randomUUID() as Id, title: action.title, completed: false },
+    ];
+    return newTodos;
+  }
+
+  if (action.type === "checked") {
+    const newTodos = state.map((t) => {
+      return t.id === action.id ? { ...t, completed: action.checked } : t;
+    });
+    return newTodos;
+  }
+
+  if (action.type === "delete") {
+    return state.filter((t) => t.id !== action.id);
+  }
+  throw Error("Unknown action.");
+};
+
 export default function App() {
-  const [todos, setTodos] = useState<Todo[]>(JSON.parse(localStorage.getItem(KEY) ?? "[]"));
   const [title, setTitle] = useState("");
+  const [todos, dispatch] = useReducer(reducer, JSON.parse(localStorage.getItem(KEY) ?? "[]"));
 
   useEffect(() => {
     localStorage.setItem(KEY, JSON.stringify(todos));
@@ -27,13 +64,7 @@ export default function App() {
         <input onChange={(e) => setTitle(e.target.value)} value={title} />
         <button
           onClick={() => {
-            setTodos((prev) => {
-              const newTodos = [
-                ...prev,
-                { id: crypto.randomUUID() as Id, title: title as Title, completed: false },
-              ];
-              return newTodos;
-            });
+            dispatch({ type: "add", title: title as Title });
             setTitle("");
           }}
         >
@@ -50,22 +81,14 @@ export default function App() {
               <input
                 checked={todo.completed}
                 onChange={(e) => {
-                  setTodos((prev) => {
-                    const newTodos = prev.map((t) => {
-                      return t.id === todo.id ? { ...t, completed: e.target.checked } : t;
-                    });
-                    return newTodos;
-                  });
+                  dispatch({ type: "checked", checked: e.target.checked, id: todo.id });
                 }}
                 type="checkbox"
               />
               <span>{todo.title}</span>
               <button
                 onClick={() => {
-                  setTodos((prev) => {
-                    const newTodos = prev.filter((t) => t.id !== todo.id);
-                    return newTodos;
-                  });
+                  dispatch({ type: "delete", id: todo.id });
                 }}
               >
                 Delete

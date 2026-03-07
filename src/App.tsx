@@ -41,7 +41,7 @@ export default function App() {
         </button>
       </div>
       <ul>
-        {todos.map((todo, i) => {
+        {todos.map((todo) => {
           return (
             <li
               key={todo.id}
@@ -51,9 +51,8 @@ export default function App() {
                 checked={todo.completed}
                 onChange={(e) => {
                   setTodos((prev) => {
-                    const newTodos = prev.toSpliced(i, 1, {
-                      ...todo,
-                      completed: e.target.checked,
+                    const newTodos = prev.map((t) => {
+                      return t.id === todo.id ? { ...t, completed: e.target.checked } : t;
                     });
                     return newTodos;
                   });

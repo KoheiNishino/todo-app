@@ -16,36 +16,42 @@ const KEY = "todos";
 type Action =
   | {
       type: "add";
-      title: Title;
+      payload: {
+        title: Title;
+      };
     }
   | {
       type: "checked";
-      checked: boolean;
-      id: Id;
+      payload: {
+        checked: boolean;
+        id: Id;
+      };
     }
   | {
       type: "delete";
-      id: Id;
+      payload: {
+        id: Id;
+      };
     };
 
 const reducer = (state: Todo[], action: Action) => {
   if (action.type === "add") {
     const newTodos = [
       ...state,
-      { id: crypto.randomUUID() as Id, title: action.title, completed: false },
+      { id: crypto.randomUUID() as Id, title: action.payload.title, completed: false },
     ];
     return newTodos;
   }
 
   if (action.type === "checked") {
     const newTodos = state.map((t) => {
-      return t.id === action.id ? { ...t, completed: action.checked } : t;
+      return t.id === action.payload.id ? { ...t, completed: action.payload.checked } : t;
     });
     return newTodos;
   }
 
   if (action.type === "delete") {
-    return state.filter((t) => t.id !== action.id);
+    return state.filter((t) => t.id !== action.payload.id);
   }
   throw Error("Unknown action.");
 };
@@ -64,7 +70,7 @@ export default function App() {
         <input onChange={(e) => setTitle(e.target.value)} value={title} />
         <button
           onClick={() => {
-            dispatch({ type: "add", title: title as Title });
+            dispatch({ type: "add", payload: { title: title as Title } });
             setTitle("");
           }}
         >
@@ -81,14 +87,17 @@ export default function App() {
               <input
                 checked={todo.completed}
                 onChange={(e) => {
-                  dispatch({ type: "checked", checked: e.target.checked, id: todo.id });
+                  dispatch({
+                    type: "checked",
+                    payload: { checked: e.target.checked, id: todo.id },
+                  });
                 }}
                 type="checkbox"
               />
               <span>{todo.title}</span>
               <button
                 onClick={() => {
-                  dispatch({ type: "delete", id: todo.id });
+                  dispatch({ type: "delete", payload: { id: todo.id } });
                 }}
               >
                 Delete

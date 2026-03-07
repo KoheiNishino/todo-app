@@ -29,7 +29,7 @@ export default function App() {
       <ul>
         {todos.map((todo, i) => {
           return (
-            <li className={css({ display: "grid", gap: 4, gridTemplateColumns: "auto 1fr" })}>
+            <li className={css({ display: "grid", gap: 4, gridTemplateColumns: "auto 1fr auto" })}>
               <input
                 checked={todo.completed}
                 onChange={(e) => {
@@ -43,6 +43,15 @@ export default function App() {
                 type="checkbox"
               />
               <span>{todo.title}</span>
+              <button
+                onClick={() => {
+                  setTodos((prev) => {
+                    return prev.toSpliced(i, 1);
+                  });
+                }}
+              >
+                Delete
+              </button>
             </li>
           );
         })}

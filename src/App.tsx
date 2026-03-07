@@ -7,8 +7,10 @@ type Todo = {
   completed: boolean;
 };
 
+const KEY = "todos";
+
 export default function App() {
-  const [todos, setTodos] = useState<Todo[]>([]);
+  const [todos, setTodos] = useState<Todo[]>(JSON.parse(localStorage.getItem(KEY) ?? "[]"));
   const [title, setTitle] = useState("");
 
   return (
@@ -18,7 +20,9 @@ export default function App() {
         <button
           onClick={() => {
             setTodos((prev) => {
-              return [...prev, { id: crypto.randomUUID(), title, completed: false }];
+              const newTodos = [...prev, { id: crypto.randomUUID(), title, completed: false }];
+              localStorage.setItem(KEY, JSON.stringify(newTodos));
+              return newTodos;
             });
             setTitle("");
           }}
@@ -34,10 +38,12 @@ export default function App() {
                 checked={todo.completed}
                 onChange={(e) => {
                   setTodos((prev) => {
-                    return prev.toSpliced(i, 1, {
+                    const newTodos = prev.toSpliced(i, 1, {
                       ...todo,
                       completed: e.target.checked,
                     });
+                    localStorage.setItem(KEY, JSON.stringify(newTodos));
+                    return newTodos;
                   });
                 }}
                 type="checkbox"
@@ -46,7 +52,9 @@ export default function App() {
               <button
                 onClick={() => {
                   setTodos((prev) => {
-                    return prev.toSpliced(i, 1);
+                    const newTodos = prev.toSpliced(i, 1);
+                    localStorage.setItem(KEY, JSON.stringify(newTodos));
+                    return newTodos;
                   });
                 }}
               >

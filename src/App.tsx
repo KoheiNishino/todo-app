@@ -33,7 +33,10 @@ export default function App() {
       <ul>
         {todos.map((todo, i) => {
           return (
-            <li className={css({ display: "grid", gap: 4, gridTemplateColumns: "auto 1fr auto" })}>
+            <li
+              key={todo.id}
+              className={css({ display: "grid", gap: 4, gridTemplateColumns: "auto 1fr auto" })}
+            >
               <input
                 checked={todo.completed}
                 onChange={(e) => {

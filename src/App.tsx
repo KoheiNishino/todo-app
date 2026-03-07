@@ -1,9 +1,13 @@
 import { useEffect, useState } from "react";
 import { css } from "../styled-system/css";
 
+type Brand<T, B> = T & { __brand: B };
+type Id = Brand<string, "id">;
+type Title = Brand<string, "title">;
+
 type Todo = {
-  id: string;
-  title: string;
+  id: Id;
+  title: Title;
   completed: boolean;
 };
 
@@ -24,7 +28,10 @@ export default function App() {
         <button
           onClick={() => {
             setTodos((prev) => {
-              const newTodos = [...prev, { id: crypto.randomUUID(), title, completed: false }];
+              const newTodos = [
+                ...prev,
+                { id: crypto.randomUUID() as Id, title: title as Title, completed: false },
+              ];
               return newTodos;
             });
             setTitle("");
@@ -57,7 +64,7 @@ export default function App() {
               <button
                 onClick={() => {
                   setTodos((prev) => {
-                    const newTodos = prev.toSpliced(i, 1);
+                    const newTodos = prev.filter((t) => t.id !== todo.id);
                     return newTodos;
                   });
                 }}

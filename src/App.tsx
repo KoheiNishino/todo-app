@@ -27,8 +27,24 @@ export default function App() {
         </button>
       </div>
       <ul>
-        {todos.map((todo) => {
-          return <li>{todo.title}</li>;
+        {todos.map((todo, i) => {
+          return (
+            <li className={css({ display: "grid", gap: 4, gridTemplateColumns: "auto 1fr" })}>
+              <input
+                checked={todo.completed}
+                onChange={(e) => {
+                  setTodos((prev) => {
+                    return prev.toSpliced(i, 1, {
+                      ...todo,
+                      completed: e.target.checked,
+                    });
+                  });
+                }}
+                type="checkbox"
+              />
+              <span>{todo.title}</span>
+            </li>
+          );
         })}
       </ul>
     </main>

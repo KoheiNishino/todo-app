@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { css } from "../styled-system/css";
 
 type Todo = {
@@ -13,6 +13,10 @@ export default function App() {
   const [todos, setTodos] = useState<Todo[]>(JSON.parse(localStorage.getItem(KEY) ?? "[]"));
   const [title, setTitle] = useState("");
 
+  useEffect(() => {
+    localStorage.setItem(KEY, JSON.stringify(todos));
+  }, [todos]);
+
   return (
     <main className={css({ margin: "0 auto", width: "80%" })}>
       <div className={css({ display: "grid", gap: 8, gridTemplateColumns: "1fr auto" })}>
@@ -21,7 +25,6 @@ export default function App() {
           onClick={() => {
             setTodos((prev) => {
               const newTodos = [...prev, { id: crypto.randomUUID(), title, completed: false }];
-              localStorage.setItem(KEY, JSON.stringify(newTodos));
               return newTodos;
             });
             setTitle("");
@@ -45,7 +48,6 @@ export default function App() {
                       ...todo,
                       completed: e.target.checked,
                     });
-                    localStorage.setItem(KEY, JSON.stringify(newTodos));
                     return newTodos;
                   });
                 }}
@@ -56,7 +58,6 @@ export default function App() {
                 onClick={() => {
                   setTodos((prev) => {
                     const newTodos = prev.toSpliced(i, 1);
-                    localStorage.setItem(KEY, JSON.stringify(newTodos));
                     return newTodos;
                   });
                 }}

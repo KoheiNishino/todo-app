@@ -70,20 +70,14 @@ const Todos: FC = () => {
   const { title, todos, addTodo, checkTodo, deleteTodo, handleTitleChange } = use(TodoContext);
 
   return (
-    <div>
-      <div>
+    <div css={{ display: "grid", gap: 16 }}>
+      <div css={{ display: "flex", gap: 8 }}>
         <input onChange={handleTitleChange} value={title} />
-        <button
-          onClick={() => {
-            addTodo();
-          }}
-        >
-          Add
-        </button>
+        <button onClick={addTodo}>Add</button>
       </div>
-      <div>
+      <div css={{ display: "grid", gap: 8 }}>
         {todos.map((todo) => (
-          <div key={todo.id}>
+          <div key={todo.id} css={{ display: "flex", gap: 4 }}>
             <input
               type="checkbox"
               checked={todo.isDone}
@@ -93,6 +87,7 @@ const Todos: FC = () => {
             />
             <span>{todo.title}</span>
             <button
+              css={{ color: "white", background: "red", borderColor: "red", borderRadius: 8 }}
               onClick={() => {
                 deleteTodo(todo.id);
               }}

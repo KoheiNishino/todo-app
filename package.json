@@ -4,13 +4,14 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "dev": "vp dev",
+    "build": "tsc -b && vp build",
+    "lint": "vp lint .",
     "lint:fix": "lint --fix",
-    "preview": "vite preview",
-    "fmt": "oxfmt",
-    "fmt:check": "oxfmt --check"
+    "preview": "vp preview",
+    "fmt": "vp fmt",
+    "fmt:check": "vp fmt --check",
+    "prepare": "vp config"
   },
   "dependencies": {
     "@mimorisuzuko/yuuka": "^1.0.7",
@@ -25,15 +26,21 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.1",
     "babel-plugin-react-compiler": "^1.0.0",
-    "eslint": "^9.39.1",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "eslint-plugin-react-refresh": "^0.4.24",
     "globals": "^16.5.0",
-    "oxfmt": "^0.36.0",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.48.0",
-    "vite": "^8.0.0",
-    "vitest": "^4.1.0"
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vite-plus": "latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "packageManager": "pnpm@10.32.1",
+  "pnpm": {
+    "overrides": {
+      "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+      "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+    }
   }
 }

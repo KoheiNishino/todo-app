@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useReducer, useState } from "react";
 import { css } from "../styled-system/css";
 
 type Todo = {
@@ -7,9 +7,52 @@ type Todo = {
   isDone: boolean;
 };
 
+type Action =
+  | {
+      type: "add";
+      title: Todo["title"];
+    }
+  | {
+      type: "check";
+      id: Todo["id"];
+    }
+  | {
+      type: "delete";
+      id: Todo["id"];
+    };
+
+const reducer = (state: Todo[], action: Action) => {
+  if (action.type === "add") {
+    const newTodos = [
+      ...state,
+      {
+        id: crypto.randomUUID(),
+        title: action.title,
+        isDone: false,
+      },
+    ];
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+    return newTodos;
+  } else if (action.type === "delete") {
+    const newTodos = state.filter((t) => t.id !== action.id);
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+    return newTodos;
+  } else if (action.type === "check") {
+    const i = state.findIndex((t) => t.id === action.id)!;
+    const newTodos = state.toSpliced(i, 1, {
+      ...state[i],
+      isDone: !state[i].isDone,
+    });
+    localStorage.setItem("todos", JSON.stringify(newTodos));
+    return newTodos;
+  } else {
+    throw new Error("No action type is found");
+  }
+};
+
 export default function App() {
   const [title, setTitle] = useState("");
-  const [todos, setTodos] = useState<Todo[]>(JSON.parse(localStorage.getItem("todos") ?? "[]"));
+  const [todos, dispatch] = useReducer(reducer, JSON.parse(localStorage.getItem("todos") ?? "[]"));
 
   return (
     <div className={css({ display: "grid", gap: 8 })}>
@@ -17,18 +60,7 @@ export default function App() {
         <input onChange={(e) => setTitle(e.target.value)} value={title} />
         <button
           onClick={() => {
-            setTodos((prev) => {
-              const newTodos = [
-                ...prev,
-                {
-                  id: crypto.randomUUID(),
-                  title,
-                  isDone: false,
-                },
-              ];
-              localStorage.setItem("todos", JSON.stringify(newTodos));
-              return newTodos;
-            });
+            dispatch({ type: "add", title });
             setTitle("");
           }}
         >
@@ -41,25 +73,14 @@ export default function App() {
             <input
               type="checkbox"
               checked={todo.isDone}
-              onChange={(e) => {
-                setTodos((prev) => {
-                  const newTodos = prev.toSpliced(prev.findIndex((t) => t.id === todo.id)!, 1, {
-                    ...todo,
-                    isDone: e.target.checked,
-                  });
-                  localStorage.setItem("todos", JSON.stringify(newTodos));
-                  return newTodos;
-                });
+              onChange={() => {
+                dispatch({ type: "check", id: todo.id });
               }}
             />
             <span>{todo.title}</span>
             <button
               onClick={() => {
-                setTodos((prev) => {
-                  const newTodos = prev.filter((t) => t.id !== todo.id);
-                  localStorage.setItem("todos", JSON.stringify(newTodos));
-                  return newTodos;
-                });
+                dispatch({ type: "delete", id: todo.id });
               }}
             >
               Delete

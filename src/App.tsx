@@ -1,4 +1,4 @@
-import { useReducer, useState } from "react";
+import { createContext, use, useReducer, useState, type ComponentProps, type FC } from "react";
 import { css } from "../styled-system/css";
 
 type Todo = {
@@ -50,18 +50,32 @@ const reducer = (state: Todo[], action: Action) => {
   }
 };
 
-export default function App() {
-  const [title, setTitle] = useState("");
-  const [todos, dispatch] = useReducer(reducer, JSON.parse(localStorage.getItem("todos") ?? "[]"));
+const TodoContext = createContext<{
+  title: Todo["title"];
+  todos: Todo[];
+  addTodo: () => void;
+  checkTodo: (id: Todo["id"]) => void;
+  deleteTodo: (id: Todo["id"]) => void;
+  handleTitleChange: ComponentProps<"input">["onChange"];
+}>({
+  title: "",
+  todos: [],
+  addTodo: () => {},
+  checkTodo: () => {},
+  deleteTodo: () => {},
+  handleTitleChange: () => {},
+});
+
+const Todos: FC = () => {
+  const { title, todos, addTodo, checkTodo, deleteTodo, handleTitleChange } = use(TodoContext);
 
   return (
     <div className={css({ display: "grid", gap: 8 })}>
       <div className={css({ display: "flex" })}>
-        <input onChange={(e) => setTitle(e.target.value)} value={title} />
+        <input onChange={handleTitleChange} value={title} />
         <button
           onClick={() => {
-            dispatch({ type: "add", title });
-            setTitle("");
+            addTodo();
           }}
         >
           Add
@@ -74,13 +88,13 @@ export default function App() {
               type="checkbox"
               checked={todo.isDone}
               onChange={() => {
-                dispatch({ type: "check", id: todo.id });
+                checkTodo(todo.id);
               }}
             />
             <span>{todo.title}</span>
             <button
               onClick={() => {
-                dispatch({ type: "delete", id: todo.id });
+                deleteTodo(todo.id);
               }}
             >
               Delete
@@ -89,5 +103,28 @@ export default function App() {
         ))}
       </div>
     </div>
+  );
+};
+
+export default function App() {
+  const [title, setTitle] = useState("");
+  const [todos, dispatch] = useReducer(reducer, JSON.parse(localStorage.getItem("todos") ?? "[]"));
+
+  return (
+    <TodoContext
+      value={{
+        title,
+        todos,
+        addTodo: () => {
+          dispatch({ type: "add", title });
+          setTitle("");
+        },
+        checkTodo: (id) => dispatch({ type: "check", id }),
+        deleteTodo: (id) => dispatch({ type: "delete", id }),
+        handleTitleChange: (e) => setTitle(e.target.value),
+      }}
+    >
+      <Todos />
+    </TodoContext>
   );
 }

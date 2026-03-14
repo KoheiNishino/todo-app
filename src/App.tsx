@@ -38,11 +38,7 @@ const reducer = (state: Todo[], action: Action) => {
     localStorage.setItem("todos", JSON.stringify(newTodos));
     return newTodos;
   } else if (action.type === "check") {
-    const i = state.findIndex((t) => t.id === action.id)!;
-    const newTodos = state.toSpliced(i, 1, {
-      ...state[i],
-      isDone: !state[i].isDone,
-    });
+    const newTodos = state.map((t) => (t.id === action.id ? { ...t, isDone: !t.isDone } : t));
     localStorage.setItem("todos", JSON.stringify(newTodos));
     return newTodos;
   } else {

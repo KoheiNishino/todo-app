@@ -7,7 +7,6 @@ import {
   type ComponentProps,
   type FC,
 } from "react";
-import { css } from "../styled-system/css";
 
 type Todo = {
   id: string;
@@ -71,8 +70,8 @@ const Todos: FC = () => {
   const { title, todos, addTodo, checkTodo, deleteTodo, handleTitleChange } = use(TodoContext);
 
   return (
-    <div className={css({ display: "grid", gap: 8 })}>
-      <div className={css({ display: "flex" })}>
+    <div>
+      <div>
         <input onChange={handleTitleChange} value={title} />
         <button
           onClick={() => {
@@ -82,9 +81,9 @@ const Todos: FC = () => {
           Add
         </button>
       </div>
-      <div className={css({ display: "grid", gap: 4 })}>
+      <div>
         {todos.map((todo) => (
-          <div key={todo.id} className={css({ display: "flex", gap: 2 })}>
+          <div key={todo.id}>
             <input
               type="checkbox"
               checked={todo.isDone}

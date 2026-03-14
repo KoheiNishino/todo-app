@@ -1,4 +1,12 @@
-import { createContext, use, useReducer, useState, type ComponentProps, type FC } from "react";
+import {
+  createContext,
+  use,
+  useEffect,
+  useReducer,
+  useState,
+  type ComponentProps,
+  type FC,
+} from "react";
 import { css } from "../styled-system/css";
 
 type Todo = {
@@ -31,15 +39,12 @@ const reducer = (state: Todo[], action: Action) => {
         isDone: false,
       },
     ];
-    localStorage.setItem("todos", JSON.stringify(newTodos));
     return newTodos;
   } else if (action.type === "delete") {
     const newTodos = state.filter((t) => t.id !== action.id);
-    localStorage.setItem("todos", JSON.stringify(newTodos));
     return newTodos;
   } else if (action.type === "check") {
     const newTodos = state.map((t) => (t.id === action.id ? { ...t, isDone: !t.isDone } : t));
-    localStorage.setItem("todos", JSON.stringify(newTodos));
     return newTodos;
   } else {
     throw new Error("No action type is found");
@@ -105,6 +110,10 @@ const Todos: FC = () => {
 export default function App() {
   const [title, setTitle] = useState("");
   const [todos, dispatch] = useReducer(reducer, JSON.parse(localStorage.getItem("todos") ?? "[]"));
+
+  useEffect(() => {
+    localStorage.setItem("todos", JSON.stringify(todos));
+  }, [todos]);
 
   return (
     <TodoContext

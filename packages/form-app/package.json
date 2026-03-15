@@ -1,0 +1,10 @@
+{
+  "name": "form-app",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "vp dev",
+    "build": "tsc -b ../../tsconfig.json && vp build",
+    "preview": "vp preview"
+  }
+}

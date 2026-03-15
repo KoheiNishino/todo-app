@@ -71,6 +71,8 @@ importers:
         specifier: npm:@voidzero-dev/vite-plus-test@latest
         version: '@voidzero-dev/vite-plus-test@0.1.11(@types/node@24.12.0)(@voidzero-dev/vite-plus-core@0.1.11(@types/node@24.12.0)(typescript@5.9.3))(typescript@5.9.3)'
 
+  packages/todo-app: {}
+
 packages:
 
   '@babel/code-frame@7.29.0':

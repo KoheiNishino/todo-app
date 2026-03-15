@@ -1,14 +1,11 @@
 {
-  "name": "todo-app",
+  "name": "todo-app-root",
   "version": "0.0.0",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vp dev",
-    "build": "tsc -b && vp build",
     "lint": "vp lint .",
     "lint:fix": "lint --fix",
-    "preview": "vp preview",
     "fmt": "vp fmt",
     "fmt:check": "vp fmt --check",
     "prepare": "vp config"

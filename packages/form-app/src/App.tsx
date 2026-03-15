@@ -26,7 +26,7 @@ export default function App() {
       css={{ display: "grid", gap: 16 }}
       onSubmit={(e) => {
         e.preventDefault();
-        const emptyKeys = Object.entries(obj).flatMap(([k, v]) => (v === "" ? k : []));
+        const emptyKeys = (Object.keys(obj) as (keyof FormFields)[]).filter((k) => obj[k] === "");
 
         if (emptyKeys.length > 0) {
           setError((prev) => ({

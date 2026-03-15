@@ -16,9 +16,9 @@ type Action =
 
 const reducer = (count: number, action: Action) => {
   if (action.type === "up") {
-    return count + 1;
+    return Math.min(count + 1, MAX_COUNT);
   } else if (action.type === "down") {
-    return count - 1;
+    return Math.max(count - 1, MIN_COUNT);
   } else if (action.type === "reset") {
     return MIN_COUNT;
   } else {

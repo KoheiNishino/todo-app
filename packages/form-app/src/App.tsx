@@ -6,6 +6,12 @@ type FormFields = {
   message: string;
 };
 
+const INITIAL_FORM = {
+  name: "",
+  email: "",
+  message: "",
+} satisfies Record<keyof FormFields, string>;
+
 const INITIAL_ERROR = {
   name: "",
   email: "",
@@ -13,12 +19,7 @@ const INITIAL_ERROR = {
 } as const satisfies Record<keyof FormFields, string>;
 
 export default function App() {
-  const [obj, setObj] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
-
+  const [obj, setObj] = useState(INITIAL_FORM);
   const [error, setError] = useState(INITIAL_ERROR);
 
   return (
@@ -37,6 +38,7 @@ export default function App() {
         }
 
         console.log(obj);
+        setObj(INITIAL_FORM);
         setError(INITIAL_ERROR);
       }}
     >

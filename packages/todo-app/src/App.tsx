@@ -1,7 +1,9 @@
 import {
   createContext,
   use,
+  useCallback,
   useEffect,
+  useMemo,
   useReducer,
   useState,
   type ComponentProps,
@@ -50,14 +52,16 @@ const reducer = (state: Todo[], action: Action) => {
   }
 };
 
-const TodoContext = createContext<{
+type TodoContextValue = {
   title: Todo["title"];
   todos: Todo[];
   addTodo: () => void;
   checkTodo: (id: Todo["id"]) => void;
   deleteTodo: (id: Todo["id"]) => void;
   handleTitleChange: ComponentProps<"input">["onChange"];
-}>({
+};
+
+const TodoContext = createContext<TodoContextValue>({
   title: "",
   todos: [],
   addTodo: () => {},
@@ -105,24 +109,30 @@ export default function App() {
   const [title, setTitle] = useState("");
   const [todos, dispatch] = useReducer(reducer, JSON.parse(localStorage.getItem("todos") ?? "[]"));
 
-  useEffect(() => {
+  const setTodosToLocalStorage = useCallback(() => {
     localStorage.setItem("todos", JSON.stringify(todos));
   }, [todos]);
 
+  useEffect(() => {
+    setTodosToLocalStorage();
+  }, [setTodosToLocalStorage, todos]);
+
+  const value = useMemo(() => {
+    return {
+      title,
+      todos,
+      addTodo: () => {
+        dispatch({ type: "add", title });
+        setTitle("");
+      },
+      checkTodo: (id) => dispatch({ type: "check", id }),
+      deleteTodo: (id) => dispatch({ type: "delete", id }),
+      handleTitleChange: (e) => setTitle(e.target.value),
+    } satisfies TodoContextValue;
+  }, [title, todos]);
+
   return (
-    <TodoContext
-      value={{
-        title,
-        todos,
-        addTodo: () => {
-          dispatch({ type: "add", title });
-          setTitle("");
-        },
-        checkTodo: (id) => dispatch({ type: "check", id }),
-        deleteTodo: (id) => dispatch({ type: "delete", id }),
-        handleTitleChange: (e) => setTitle(e.target.value),
-      }}
-    >
+    <TodoContext value={value}>
       <Todos />
     </TodoContext>
   );
